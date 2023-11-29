@@ -13,7 +13,8 @@ class Node {
 class Tree {
   constructor(arr) {
     this.arr = this.mergeSort(arr, 0, arr.length - 1);
-    this.root = this.buildTree(arr);
+    this.root = this.buildTree(this.arr, 0, this.arr.length - 1);
+    // this.prettyPrint(this.root);
   }
 
   mergeSort(arr, first, last) {
@@ -65,25 +66,46 @@ class Tree {
     }
   }
 
-  buildTree(arr) {
-    let start = 0;
-    let end = arr.length - 1;
-
+  buildTree(arr, start, end) {
     if (start > end) return null;
 
     let mid = Math.trunc((start + end) / 2);
-
+    // console.log(mid);
     let root = new Node(arr[mid]);
 
-    // root.left = this.buildTree(arr);
+    root.left = this.buildTree(arr, start, mid - 1);
+    root.right = this.buildTree(arr, mid + 1, end);
 
-    return 'will come back on this method';
+    return root;
+  }
+
+  prettyPrint(node, prefix = '', isLeft = true) {
+    if (node === null) {
+      return;
+    }
+    if (node.right !== null) {
+      this.prettyPrint(
+        node.right,
+        `${prefix}${isLeft ? '│   ' : '    '}`,
+        false
+      );
+    }
+    console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.data}`);
+    if (node.left !== null) {
+      this.prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
+    }
   }
 }
 
 let sortedArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 const firstTree = new Tree(sortedArray);
-
-// firstTree.mergeSort(sortedArray, 0, sortedArray.length - 1);
-
 console.log(firstTree);
+
+/*        8
+       /    \
+      4      67
+     / \    /   \
+    1   5  9    324
+         \         \
+          7        6345
+*/
