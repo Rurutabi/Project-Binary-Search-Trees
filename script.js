@@ -79,6 +79,55 @@ class Tree {
     return root;
   }
 
+  insertNode(root, data) {
+    if (typeof data !== 'number') return 'Not number';
+
+    if (root === null) {
+      root = new Node(data);
+      return root;
+    }
+
+    if (data < root.data) {
+      root.left = this.insertNode(root.left, data);
+    } else if (data > root.data) {
+      root.right = this.insertNode(root.right, data);
+    }
+
+    return root;
+  }
+
+  deleteNode(root, data) {
+    if (root === null) {
+      return root;
+    }
+
+    if (data < root.data) {
+      root.left = this.deleteNode(root.left, data);
+    } else if (data > root.data) {
+      root.right = this.deleteNode(root.right, data);
+    } else {
+      if (root.left === null) {
+        return root.right;
+      } else if (root.right === null) {
+        return root.left;
+      }
+
+      // Node with two children
+      let succ = this.findMin(root.right);
+      root.data = succ.data;
+      root.right = this.deleteNode(root.right, succ.data);
+    }
+
+    return root;
+  }
+
+  findMin(node) {
+    while (node.left !== null) {
+      node = node.left;
+    }
+    return node;
+  }
+
   prettyPrint(node, prefix = '', isLeft = true) {
     if (node === null) {
       return;
@@ -99,7 +148,15 @@ class Tree {
 
 let sortedArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 const firstTree = new Tree(sortedArray);
-console.log(firstTree);
+
+// console.log(firstTree.root);
+firstTree.insertNode(firstTree.root, 2);
+firstTree.prettyPrint(firstTree.root);
+firstTree.deleteNode(firstTree.root, 1);
+console.log('--------------------------------------------------');
+firstTree.prettyPrint(firstTree.root);
+// firstTree.insertNode(3);
+// console.log(sortedArray);
 
 /*        8
        /    \
