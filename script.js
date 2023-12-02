@@ -27,7 +27,7 @@ class Tree {
     }
 
     const mergeUnique = [...new Set(arr)];
-
+    console.log(mergeUnique);
     return mergeUnique;
   }
 
@@ -106,6 +106,7 @@ class Tree {
     } else if (data > root.data) {
       root.right = this.deleteNode(root.right, data);
     } else {
+      //No with no child
       if (root.left === null) {
         return root.right;
       } else if (root.right === null) {
@@ -113,7 +114,7 @@ class Tree {
       }
 
       // Node with two children
-      let succ = this.findMin(root.right);
+      let succ = this.findMinnode(root.right);
       root.data = succ.data;
       root.right = this.deleteNode(root.right, succ.data);
     }
@@ -121,11 +122,30 @@ class Tree {
     return root;
   }
 
-  findMin(node) {
+  findMinnode(node) {
     while (node.left !== null) {
       node = node.left;
     }
     return node;
+  }
+
+  find(root, data) {
+    if (root === null) {
+      console.log('Null value not found');
+      return null;
+    }
+
+    // if (data === root.data) {
+    //   return root;
+    // }
+
+    if (root.data === data) {
+      return root;
+    } else if (data < root.data) {
+      return this.find(root.left, data);
+    } else if (data > root.data) {
+      return this.find(root.right, data);
+    }
   }
 
   prettyPrint(node, prefix = '', isLeft = true) {
@@ -151,10 +171,10 @@ const firstTree = new Tree(sortedArray);
 
 // console.log(firstTree.root);
 firstTree.insertNode(firstTree.root, 2);
-firstTree.prettyPrint(firstTree.root);
-firstTree.deleteNode(firstTree.root, 1);
-console.log('--------------------------------------------------');
-firstTree.prettyPrint(firstTree.root);
+// firstTree.prettyPrint(firstTree.root);
+firstTree.deleteNode(firstTree.root, 2);
+// console.log('--------------------------------------------------');
+console.log(firstTree.find(firstTree.root, 1));
 // firstTree.insertNode(3);
 // console.log(sortedArray);
 
