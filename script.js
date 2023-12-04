@@ -27,7 +27,7 @@ class Tree {
     }
 
     const mergeUnique = [...new Set(arr)];
-    console.log(mergeUnique);
+
     return mergeUnique;
   }
 
@@ -135,10 +135,6 @@ class Tree {
       return null;
     }
 
-    // if (data === root.data) {
-    //   return root;
-    // }
-
     if (root.data === data) {
       return root;
     } else if (data < root.data) {
@@ -164,19 +160,51 @@ class Tree {
       this.prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
     }
   }
+
+  levelOrder(nodeVisit) {
+    if (this.root === null) return;
+
+    let resultArr = [];
+    let queue = [this.root];
+
+    while (queue.length) {
+      const levelSize = queue.length;
+      const tempStorage = [];
+
+      for (let i = 0; i < levelSize; i++) {
+        const currentNode = queue.shift();
+        // console.log(currentNode);
+        tempStorage.push(currentNode.data);
+        if (currentNode.left) {
+          queue.push(currentNode.left);
+        }
+        if (currentNode.right) {
+          queue.push(currentNode.right);
+        }
+      }
+      resultArr.push(tempStorage);
+    }
+    if (nodeVisit === undefined) {
+      return resultArr;
+    } else {
+      nodeVisit(resultArr);
+    }
+  }
+
+  nodeVisit(data) {
+    const temp = data.flat();
+    for (const value of temp) {
+      console.log('The node visit is ' + value);
+    }
+  }
 }
 
 let sortedArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 const firstTree = new Tree(sortedArray);
 
-// console.log(firstTree.root);
-firstTree.insertNode(firstTree.root, 2);
-// firstTree.prettyPrint(firstTree.root);
-firstTree.deleteNode(firstTree.root, 2);
-// console.log('--------------------------------------------------');
-console.log(firstTree.find(firstTree.root, 1));
-// firstTree.insertNode(3);
-// console.log(sortedArray);
+const arr = [];
+
+firstTree.prettyPrint(firstTree.root);
 
 /*        8
        /    \
