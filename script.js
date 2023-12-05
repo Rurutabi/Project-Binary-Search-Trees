@@ -11,6 +11,9 @@ class Node {
 }
 
 class Tree {
+  tempHeight = -1;
+  tempDept = -1;
+  tempStr = [];
   constructor(arr) {
     this.arr = this.mergeSort(arr, 0, arr.length - 1);
     this.root = this.buildTree(this.arr, 0, this.arr.length - 1);
@@ -184,7 +187,7 @@ class Tree {
       }
       resultArr.push(tempStorage);
     }
-    if (nodeVisit === undefined) {
+    if (nodeVisit !== undefined) {
       return resultArr;
     } else {
       nodeVisit(resultArr);
@@ -197,20 +200,166 @@ class Tree {
       console.log('The node visit is ' + value);
     }
   }
+
+  preOrder(root, arr) {
+    if (root !== null) {
+      arr.push(root.data);
+      this.preOrder(root.left, arr);
+      this.preOrder(root.right, arr);
+    }
+
+    return arr;
+  }
+
+  inOrder(root, arr) {
+    if (root !== null) {
+      this.inOrder(root.left, arr);
+      arr.push(root.data);
+      this.inOrder(root.right, arr);
+    }
+
+    return arr;
+  }
+
+  postOrder(root, arr) {
+    if (root !== null) {
+      this.postOrder(root.left, arr);
+      this.postOrder(root.right, arr);
+      arr.push(root.data);
+    }
+
+    return arr;
+  }
+
+  heightUntil(root, node) {
+    if (root === null) {
+      return -1;
+    }
+
+    let leftSide = this.heightUntil(root.left, node);
+    let rightSide = this.heightUntil(root.right, node);
+
+    let count = Math.max(leftSide, rightSide) + 1;
+
+    if (root.data === node.data) {
+      this.tempHeight = count;
+    }
+
+    return count;
+  }
+
+  getHeightNode(root, node) {
+    if (node === null) return 'node === null';
+    this.heightUntil(root, node);
+    return this.tempHeight;
+  }
+
+  depthforLoop(node) {
+    if (node === null) return 'node === null';
+
+    if (this.root.data === node.data) return 0;
+
+    let count = -1;
+
+    let queue = [this.root];
+
+    while (queue.length) {
+      const levelSize = queue.length;
+      const tempStorage = [];
+
+      for (let i = 0; i < levelSize; i++) {
+        const currentNode = queue.shift();
+        tempStorage.push(currentNode.data);
+
+        if (currentNode.left) {
+          queue.push(currentNode.left);
+        }
+        if (currentNode.right) {
+          queue.push(currentNode.right);
+        }
+      }
+
+      count++;
+
+      console.log(`Level ${count} - tempStorage:`, tempStorage);
+      console.log(`Level ${count} - queue:`, queue);
+
+      for (const value of tempStorage) {
+        if (node.data === value) {
+          return count;
+        }
+      }
+    }
+  }
+
+  depthRecur(root, node, depth = 0) {
+    if (root === null) {
+      return depth;
+    }
+
+    this.depthRecur(root.left, node, depth + 1);
+    this.depthRecur(root.right, node, depth + 1);
+    if (root.data === node.data) {
+      this.tempDept = depth;
+    }
+  }
+
+  theDepth(root, node) {
+    this.depthRecur(root, node);
+    return this.tempDept;
+  }
+
+  balanceHeight(root) {
+    if (root === null) return 0;
+    let leftSide = this.balanceHeight(root.left);
+    let rightSide = this.balanceHeight(root.right);
+    if (Math.abs(leftSide - rightSide) > 1) return -1;
+
+    if (leftSide > rightSide) return leftSide + 1;
+    return rightSide + 1;
+  }
+
+  isBalanced(root) {
+    if (this.balanceHeight(root) > -1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  reBalance(root) {
+    if (this.isBalanced(root) === true) return;
+
+    if (root === null) return;
+
+    // this.arr = this.mergeSort(arr, 0, arr.length - 1);
+    // this.root = this.buildTree(this.arr, 0, this.arr.length - 1);
+    const arr = this.levelOrder(root).flat();
+    const newArr = this.mergeSort(arr, 0, arr.length - 1);
+
+    this.root = this.buildTree(newArr, 0, newArr.length - 1);
+  }
 }
 
 let sortedArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 const firstTree = new Tree(sortedArray);
 
-const arr = [];
+let tempArr = [];
 
+// console.log(firstTree.postOrder(firstTree.root, tempArr));
+firstTree.deleteNode(firstTree.root, 3);
+firstTree.deleteNode(firstTree.root, 7);
+firstTree.deleteNode(firstTree.root, 5);
+firstTree.deleteNode(firstTree.root, 1);
+// firstTree.deleteNode(firstTree.root, 4);
+
+firstTree.reBalance(firstTree.root);
 firstTree.prettyPrint(firstTree.root);
-
 /*        8
        /    \
       4      67
-     / \    /   \
-    1   5  9    324
-         \         \
-          7        6345
+            /   \
+            9    324
+            \     \
+            23    6345
 */
